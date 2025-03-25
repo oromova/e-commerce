@@ -4,7 +4,7 @@ import useCartStore from '@/store/useCartStore';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
-import like from '../../assets/like.svg';
+import like from '../../assets/heart-regular.svg';
 import korzina from '../../assets/korzina.svg';
 
 function Korzina() {

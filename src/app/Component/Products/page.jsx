@@ -3,14 +3,18 @@ import axios from 'axios';
 import Image from 'next/image';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
-import like from '../../../assets/like.svg';
+import like1 from '../../../assets/heart-regular.svg';
+import fulllike from '../../../assets/heart-solid.svg';
 import korzina from '../../../assets/korzina.svg';
 import useCartStore from '@/store/useCartStore';
+import useLikeStore from '../../../store/useLikeStore';
 
 function Products() {
   const [data, setData] = useState(null);
 
   const addToCart = useCartStore((state) => state.addToCart);
+  const changeToLike = useLikeStore((state) => state.changeToLike);
+  const like = useLikeStore((state) => state.like);
 
   useEffect(() => {
     const getData = async () => {
@@ -18,7 +22,7 @@ function Products() {
         const res = await axios.get("https://dummyjson.com/products");
         setData(res?.data?.products);
         console.log(res?.data?.products);
-      } catch {
+      } catch (error) {
         console.log(error);
       }
     };
@@ -30,16 +34,27 @@ function Products() {
       <h1 className='text-center font-bold text-4xl mt-5'>Our Products</h1>
       <div className='w-[1200px] mx-auto mt-6 flex justify-between flex-wrap gap-5'>
         {
-          data?.map((product) => (
-            <div className='w-[250px] h-[350px] shadow-lg p-5' key={product.id}>
+          data?.map((product) => {
+            const isExist = like.some((item) => item.id === product.id);
+            return (
+              <div className='w-[250px] h-[350px] shadow-lg p-5' key={product.id}>
               {/* Icons */}
               <div className="mb-6 flex justify-end gap-6">
-                <Link href={'/like'} className="relative w-[20px] h-[20px] hover:scale-110 transition-transform">
-                  <Image fill src={like} alt="Like" className="object-contain" />
-                </Link>
-                <Link href={'/korzina'} className="relative w-[20px] h-[20px] hover:scale-110 transition-transform">
+                <button
+                  onClick={() => {changeToLike(product)}}
+                  className="relative w-[20px] h-[20px] hover:scale-110 transition-transform">
+                  {
+                    isExist ? (
+                      <Image fill src={fulllike} alt="Like" className="object-contain" />
+                    )
+                      : (
+                        <Image fill src={like1} alt="Like" className="object-contain" />
+                      )
+                  }
+                </button>
+                {/* <Link href={'/korzina'} className="relative w-[20px] h-[20px] hover:scale-110 transition-transform">
                   <Image fill src={korzina} alt="Cart" className="object-contain" />
-                </Link>
+                </Link> */}
               </div>
               {/* Product Image */}
               <div className='w-[200px] h-[150px] relative p-5'>
@@ -57,7 +72,8 @@ function Products() {
                   className='bg-green-300 px-6 py-2 rounded-md'>Buy</button>
               </Link>
             </div>
-          ))
+            )
+})
         }
       </div>
     </div>
